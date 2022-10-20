@@ -55,6 +55,9 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         todos: [...this.state.todos, newTodo],
         newTodoName: ''
       })
+      alert('Task created!')
+      //Empty input contents
+      event.target.value = '';
     } catch {
       alert('Todo creation failed')
     }
