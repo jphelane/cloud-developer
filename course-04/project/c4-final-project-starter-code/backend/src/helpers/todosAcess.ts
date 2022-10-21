@@ -8,10 +8,9 @@ import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
-// const logger = createLogger('TodosAccess')
 const todosTable = process.env.TODOS_TABLE
 const index = process.env.TODOS_CREATED_AT_INDEX
-const docClient: DocumentClient = createDynamoDBClient()
+const docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient();
 
 // // TODO: Implement the dataLayer logic
 export async function createTodo(todo: TodoItem): Promise<TodoItem> {
@@ -31,9 +30,6 @@ export async function getAllTodosByUserId(userId: string): Promise<TodoItem[]>{
     const result = await docClient.query({
         TableName: todosTable,
         KeyConditionExpression: 'userId = :userId',
-        // ExpressionAttributeNames: {
-        //     '#userId': 'userId'
-        // },
         ExpressionAttributeValues: {
             ':userId': userId
         }
@@ -113,16 +109,4 @@ export async function deleteTodo(todo_id: string, user_id: string): Promise<Todo
     console.log('Delete result: ', result)
 
     return null
-}
-
-function createDynamoDBClient() {
-    if (process.env.IS_OFFLINE) {
-      console.log('Creating a local DynamoDB instance')
-      return new XAWS.DynamoDB.DocumentClient({
-        region: 'localhost',
-        endpoint: 'http://localhost:8000'
-      })
-    }
-  
-    return new XAWS.DynamoDB.DocumentClient()
 }

@@ -46,18 +46,25 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
-      const dueDate = this.calculateDueDate()
-      const newTodo = await createTodo(this.props.auth.getIdToken(), {
-        name: this.state.newTodoName,
-        dueDate
-      })
-      this.setState({
-        todos: [...this.state.todos, newTodo],
-        newTodoName: ''
-      })
-      alert('Task created!')
-      //Empty input contents
-      event.target.value = '';
+      if (this.state.newTodoName != ""){
+        //Empty input contents
+        event.target.value = '';
+        const dueDate = this.calculateDueDate()
+        const newTodo = await createTodo(this.props.auth.getIdToken(), {
+          name: this.state.newTodoName,
+          dueDate
+        })
+        this.setState({
+          todos: [...this.state.todos, newTodo],
+          newTodoName: ''
+        })
+        alert('Task created!')
+      }
+      else {
+        alert("Task name cannot be empty!")
+      }
+      
+      
     } catch {
       alert('Todo creation failed')
     }
