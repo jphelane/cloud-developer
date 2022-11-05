@@ -12,6 +12,18 @@ export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const newTodo: CreateTodoRequest = JSON.parse(event.body)
     // TODO: Implement creating a new TODO item
+
+    //Validate request body
+    let bodyProperties: Array<String> = Object.keys(newTodo);
+    
+    if (!bodyProperties.includes("name") || !bodyProperties.includes("dueDate")){
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          "message": "Invalid request body"
+        })
+      }
+    }
     
     const todo =  todoBuilder(newTodo, event)
     await createTodo(todo)

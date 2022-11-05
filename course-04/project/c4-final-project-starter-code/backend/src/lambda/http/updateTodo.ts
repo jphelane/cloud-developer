@@ -15,9 +15,22 @@ export const handler = middy(
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
-    const result = await updateTodo(todoId, userId, updatedTodo)
+
+    //Validate request body
+    let bodyProperties: Array<String> = Object.keys(updatedTodo);
+    
+    if (!bodyProperties.includes("name") || !bodyProperties.includes("dueDate")){
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          "message": "Invalid request body"
+        })
+      }
+    }
+
     // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
-    console.log('Update result: ', result)
+    const result = await updateTodo(todoId, userId, updatedTodo)
+    console.log(result);
 
     return {
       statusCode: 201,
